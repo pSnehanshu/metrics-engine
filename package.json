@@ -4,7 +4,8 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "node ."
+    "start": "node .",
+    "test": "mocha"
   },
   "author": "Snehanshu \"Paul\" Phukon",
   "license": "UNLICENSED",
@@ -13,5 +14,9 @@
     "express": "^4.17.1",
     "lodash": "^4.17.20",
     "ms": "^2.1.2"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^8.2.1"
   }
 }
