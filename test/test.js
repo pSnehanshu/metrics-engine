@@ -26,6 +26,30 @@ describe('utils', function () {
 });
 
 describe('Store', function () {
+  it('should filter expired values', function (done) {
+    const expiry = '2s';
+    const expiryMs = ms(expiry);
+
+    this.timeout(expiryMs + 5000);
+
+    const store = Store();
+    const key = 'random-key';
+    const value = 20;
+
+    // Insert an event
+    store.insert(key, value);
+
+    // Wait for x sec
+    setTimeout(() => {
+      // Insert another event
+      store.insert(key, value);
+
+      const unexpired = store.getNonExpired(key, expiry);
+      expect(unexpired).to.have.length(1);
+      done();
+    }, expiryMs);
+  });
+
   it('should remove expired values', function (done) {
     const expiry = '2s';
     const expiryMs = ms(expiry);
