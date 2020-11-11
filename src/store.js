@@ -14,12 +14,20 @@ function Store() {
     storage[key].push(event);
   }
 
-  function getExpired(key, olderBy = '1h') {
+  function removeExpired(olderBy = '1h') {
     const olderByDate = getOldDate(olderBy);
-    const events = storage[key];
-    return _.chain(events)
-      .filter((event) => (event.time <= olderByDate))
-      .value();
+
+    _.each(storage, (events) => {
+      _.each(events, (event, index) => {
+        if ((event.time <= olderByDate)) {
+          if (_.isArray(events)) {
+            events.splice(index, 1);
+          } else {
+            delete events[index];
+          }
+        }
+      });
+    });
   }
 
   function getNonExpired(key, olderBy = '1h') {
@@ -38,7 +46,7 @@ function Store() {
     insert,
     latestSum,
     getNonExpired,
-    getExpired,
+    removeExpired,
   };
 }
 
