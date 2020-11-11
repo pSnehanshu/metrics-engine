@@ -59,6 +59,7 @@ function Store() {
     insert,
     getNonExpired,
     removeExpired,
+    storage: () => _.cloneDeep(storage),
   };
 }
 

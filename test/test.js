@@ -3,6 +3,7 @@ const ms = require('ms');
 
 // Ours
 const getOldDate = require('../src/utils/getOldDate');
+const Store = require('../src/store');
 
 describe('utils', function () {
   describe('getOldDate', function () {
@@ -21,5 +22,29 @@ describe('utils', function () {
 
       expect(calculatedOldDate).to.equal(backThen);
     });
+  });
+});
+
+describe('Store', function () {
+  it('should remove expired values', function (done) {
+    const expiry = '2s';
+    const expiryMs = ms(expiry);
+
+    this.timeout(expiryMs + 5000);
+
+    const store = Store();
+    const key = 'random-key';
+    const value = 20;
+
+    // Insert an event
+    store.insert(key, value);
+
+    // Wait for x sec
+    setTimeout(() => {
+      store.removeExpired(expiry);
+      const unexpired = store.storage()[key];
+      expect(unexpired).to.have.length(0);
+      done();
+    }, expiryMs);
   });
 });
