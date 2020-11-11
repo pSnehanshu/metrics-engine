@@ -6,10 +6,13 @@ const Store = require('./store');
 const app = express.Router();
 const FRESH_METRIC_AGE = _.get(process, 'env.FRESH_METRIC_AGE', '1h');
 
+// In-memory data structure to hold metric values
 const store = Store();
 
 // Kicking off garbage collector
 setInterval(() => store.removeExpired(FRESH_METRIC_AGE), ms(FRESH_METRIC_AGE));
+
+// Route definitions
 
 app.post('/:key', (req, res) => {
   const { key } = req.params;

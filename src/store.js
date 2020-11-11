@@ -2,8 +2,16 @@ const _ = require('lodash');
 const getOldDate = require('./utils/getOldDate');
 
 function Store() {
+  // Metric events are stored as arrays inside
+  // this object, keyd by the metric key
   const storage = {};
 
+  /**
+   * Insert an event
+   * @param {String} key 
+   * @param {Number} value 
+   * @param {Date} time 
+   */
   function insert(key, value, time = new Date()) {
     const event = { value, time };
 
@@ -14,6 +22,10 @@ function Store() {
     storage[key].push(event);
   }
 
+  /**
+   * Removes expired events specified by given input
+   * @param {String} olderBy Any time expression supported by vercel/ms
+   */
   function removeExpired(olderBy = '1h') {
     const olderByDate = getOldDate(olderBy);
 
@@ -30,6 +42,11 @@ function Store() {
     });
   }
 
+  /**
+   * Returns non-expired events of the given key specified by given time input
+   * @param {String} key 
+   * @param {String} olderBy Any time expression supported by vercel/ms
+   */
   function getNonExpired(key, olderBy = '1h') {
     const olderByDate = getOldDate(olderBy);
     const events = storage[key];
