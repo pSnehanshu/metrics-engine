@@ -38,13 +38,8 @@ function Store() {
       .value();
   }
 
-  function latestSum(key, notOlderThan = '1h') {
-    return _.sumBy(getNonExpired(key, notOlderThan), 'value');
-  }
-
   return {
     insert,
-    latestSum,
     getNonExpired,
     removeExpired,
   };
