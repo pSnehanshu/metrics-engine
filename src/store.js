@@ -1,12 +1,5 @@
 const _ = require('lodash');
-const ms = require('ms');
-
-function getOldDate(olderBy = '1h') {
-  const miliseconds = ms(olderBy);
-  const now = Date.now();
-
-  return new Date(now - miliseconds);
-}
+const getOldDate = require('./utils/getOldDate');
 
 function Store() {
   const storage = {};
@@ -21,18 +14,31 @@ function Store() {
     storage[key].push(event);
   }
 
-  function latestSum(key, notOlderThan = '1h') {
-    const notOlderThanDate = getOldDate(notOlderThan);
+  function getExpired(key, olderBy = '1h') {
+    const olderByDate = getOldDate(olderBy);
     const events = storage[key];
     return _.chain(events)
-      .filter((event) => (event.time > notOlderThanDate))
-      .sumBy('value')
+      .filter((event) => (event.time <= olderByDate))
       .value();
+  }
+
+  function getNonExpired(key, olderBy = '1h') {
+    const olderByDate = getOldDate(olderBy);
+    const events = storage[key];
+    return _.chain(events)
+      .filter((event) => (event.time > olderByDate))
+      .value();
+  }
+
+  function latestSum(key, notOlderThan = '1h') {
+    return _.sumBy(getNonExpired(key, notOlderThan), 'value');
   }
 
   return {
     insert,
     latestSum,
+    getNonExpired,
+    getExpired,
   };
 }
 

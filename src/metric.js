@@ -15,7 +15,7 @@ app.post('/:key', (req, res) => {
 
 app.get('/:key/sum', (req, res) => {
   const { key } = req.params;
-  const value = store.latestSum(key, '10 s');
+  const value = _.sumBy(store.getNonExpired(key, '10s'), 'value');
   res.json({ value });
 });
 
