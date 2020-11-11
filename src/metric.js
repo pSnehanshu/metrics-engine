@@ -1,13 +1,15 @@
 const _ = require('lodash');
+const ms = require('ms');
 const express = require('express');
 const Store = require('./store');
-const garbageCollect = require('./utils/garbageCollect');
 
 const app = express.Router();
 const FRESH_METRIC_AGE = _.get(process, 'env.FRESH_METRIC_AGE', '1h');
+
 const store = Store();
 
-garbageCollect(store, FRESH_METRIC_AGE);
+// Kicking off garbage collector
+setInterval(() => store.removeExpired(FRESH_METRIC_AGE), ms(FRESH_METRIC_AGE));
 
 app.post('/:key', (req, res) => {
   const { key } = req.params;
